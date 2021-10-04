@@ -1,6 +1,6 @@
 import csv
-from sorting_algorithms import bubble_sort
-import math
+from sorting_algorithms import bubble_sort, sq_root
+#import math
 
 
 def calc_std_dev(list):
@@ -25,7 +25,7 @@ def calc_std_dev(list):
 
     #4. Take the square root of the above and we are done
 
-    std_dev = math.sqrt(mu2)
+    std_dev = sq_root(mu2)
 
     return std_dev
 

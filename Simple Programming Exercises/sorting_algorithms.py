@@ -12,3 +12,13 @@ def bubble_sort(list1):
                 list1[j] = list1[j+1]  
                 list1[j+1] = temp  
     return list1
+
+def sq_root(n):
+    x = n               
+    while True:         
+                                  
+        root = .5 * (x + (n/x))   
+        if (x - root) < .001:        
+            break                
+        x = root                  
+    return root
