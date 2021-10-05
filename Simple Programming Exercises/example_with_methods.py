@@ -150,7 +150,8 @@ if __name__ == "__main__":
     maximum = get_maximum_value(scores)
     median = get_median_value(scores)
     mode = get_mode(scores)
+    range = get_maximum_value(scores) - get_minimum_value(scores)
     std_dev = calc_std_dev(scores)
 
-    print(f'Average: {average} Median: {median} Smallest: {minimum} Largest: {maximum} mode: {mode} std_dev: {std_dev}')
+    print(f'Average: {average} Median: {median} Smallest: {minimum} Largest: {maximum} mode: {mode} range: {range} std_dev: {std_dev}')
     
