@@ -1,7 +1,7 @@
 import csv
 from sorting_algorithms import bubble_sort, sq_root
-#import math
-
+import math
+import pandas as pd
 
 def calc_std_dev(list):
     """ 
@@ -85,6 +85,48 @@ def get_median_value(list):
     median = list1[int(len(list1)/2)]
     return median
 
+def get_median_value_and_index(list):
+    """ 
+        Given a list of numbers as input this function will return the median  value in that list.
+        It calls the bubble_sort function to sort the list
+
+        Note - the original function is incorrect
+    
+        :param list: the list of numbers given as input
+        :return: the median value of the list and its position
+    """
+    list1 = list.copy()
+    bubble_sort(list1)
+
+    #find the index for the middle value
+    no_elements = int(len(list1))
+    
+    idx = math.ceil(no_elements/2) -1
+
+    #print(idx)
+    
+
+    #check if number of elements in the list is odd or even
+    #if odd then the array was odd length
+    #so the median would be the middle value in positon(idx +1) python index starts at zero whereas position starts at 1
+    #if even then the array was even length
+    #so need to take the average of the two middle values
+
+    if no_elements%2 == 1:
+        median = list1[idx]
+    else:
+        median = (list1[idx] + list1[idx+1])/2
+    return median, idx
+
+def get_quartiles(list,idx):
+    list1 = list.copy()
+    bubble_sort(list1)
+    q1_list=list1[:idx]
+    q3_list=list1[idx+1:]
+
+    q1= get_median_value_and_index(q1_list)
+    q3= get_median_value_and_index(q3_list)
+    return q1, q3
 
 #def bubble_sort(list1):
     """ moving this to sorting-algorithms.py as a separate module"""    
@@ -144,14 +186,18 @@ def read_scores_from_csv(filename):
 if __name__ == "__main__":
 
     scores = read_scores_from_csv('example.csv')
+    ds = pd.Series(scores)
+    print(ds)
+    print(ds.describe())
     
     average = get_average(scores)
     minimum = get_minimum_value(scores)   
     maximum = get_maximum_value(scores)
-    median = get_median_value(scores)
+    median,idx = get_median_value_and_index(scores)
     mode = get_mode(scores)
     range = get_maximum_value(scores) - get_minimum_value(scores)
     std_dev = calc_std_dev(scores)
+    q1, q3 = get_quartiles(scores,idx)
 
-    print(f'Average: {average} Median: {median} Smallest: {minimum} Largest: {maximum} mode: {mode} range: {range} std_dev: {std_dev}')
+    print(f'Average: {average} Smallest: {minimum} Q1: {q1[0]} Median: {median} Q3: {q3[0]}Largest: {maximum} Mode: {mode} Range: {range} Std_dev: {std_dev}')
     
