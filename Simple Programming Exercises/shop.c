@@ -57,8 +57,8 @@ struct Shop createAndStockShop()
         exit(EXIT_FAILURE);
 
     while ((read = getline(&line, &len, fp)) != -1) {
-        // printf("Retrieved line of length %zu:\n", read);
-        // printf("%s IS A LINE", line);
+        printf("Retrieved line of length %zu:\n", read);
+        printf("%s IS A LINE", line);
 		char *n = strtok(line, ",");
 		char *p = strtok(NULL, ",");
 		char *q = strtok(NULL, ",");
