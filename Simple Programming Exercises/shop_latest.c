@@ -21,17 +21,17 @@ struct Shop {
 struct Customer {
 	char* name;
 	double budget;
-	struct Stock shoppingList[10];
-	int index;
+
 
 };
 
+struct Order {
+	struct Customer customer;
+	struct Stock shoppingList[10];
+	int index;
+};
 
-void printProduct(struct Product p)
-{
-	printf("PRODUCT NAME: %s \nPRODUCT PRICE: %.2f\n", p.name, p.price);
-	printf("-------------\n");
-}
+
 
 
 struct Shop createAndStockShop()
@@ -67,15 +67,17 @@ struct Shop createAndStockShop()
 	return shop;
 }
 
-struct Customer readCustomerOrders()
+struct Order readCustomerOrders()
 {
-	struct Customer customer = {"Mark",150};
+	struct Order order = {};
     FILE *fp1;
     char *line = NULL;
     size_t len = 0;
     ssize_t read;
-	int lcount = 0;
-	int idx = 0;
+	char *sn = "";
+	char *sname = malloc(sizeof(char) * 50);
+	strcpy(sname, sn);
+
 
     fp1 = fopen("orders.csv", "r");
     if (fp1 == NULL)
@@ -84,7 +86,7 @@ struct Customer readCustomerOrders()
     while ((read = getline(&line, &len, fp1)) != -1) {
         printf("Retrieved line of length %zu:\n", read);
         //printf("%s IS A LINE\n", line);
-		printf("line counter %d\n",lcount++);
+		//printf("line counter %d\n",lcount++);
 		char *cn = strtok(line, ",");
 		char *cb = strtok(NULL, ",");
 		char *op = strtok(NULL, ",");
@@ -99,13 +101,20 @@ struct Customer readCustomerOrders()
 		char *cname = malloc(sizeof(char) * 50);
 		strcpy(cname, cn);
 		//printf("%s is the customer name\n", cname);
+		//printf("%s is the saved name\n", sname);
 		
 		char *pname = malloc(sizeof(char) * 50);
 		strcpy(pname, op);
 		//printf("%s is the ordered product\n", pname);
-		
-		//struct Customer customer = { cname, budget };
-		//printf("Customer name is %s and their budget is %.2f\n",customer.name,customer.budget);
+		//int result = strcmp(cname,sname);
+		//printf("result is %d\n",result);
+		//create a customer every time customer name changes and reset order index to 0
+		if (strcmp(cname,sname) != 0 )
+			{struct Customer customer = { cname, budget };
+			strcpy(sname,cname);
+			order.index = 0;
+			//printf("sname is %s cname is %s\n",sname,cname);
+			printf("Customer name is %s and their budget is %.2f\n",customer.name,customer.budget);}
 		//above was restting customer index to 0 for each line
 
 
@@ -115,14 +124,14 @@ struct Customer readCustomerOrders()
 
 		printf("Product name is %s price is %.2f and the quantity ordered is %d\n",shoppingListItem.product.name, shoppingListItem.product.price, shoppingListItem.quantity);	
 		
-		printf("customer index is %d\n",customer.index);
+		printf("order index is %d\n",order.index);
 		//shop.stock[shop.index++] = stockItem;
 		//dominic.shoppingList[dominic.index++] = cokeStock;
-		customer.shoppingList[customer.index++] = shoppingListItem;
-		printf("slp = %s\n",customer.shoppingList[0].product.name);
+		order.shoppingList[order.index++] = shoppingListItem;
+		/*printf("slp = %s\n",customer.shoppingList[0].product.name);
 		printf("slp = %.2f\n",customer.shoppingList[0].product.price);
 		printf("slq = %d\n",customer.shoppingList[0].quantity);
-		printf("customer index is %d\n",customer.index);
+		printf("customer index is %d\n",customer.index);*/
 
 
 		// printf("NAME OF PRODUCT %s PRICE %.2f QUANTITY %d\n", name, price, quantity);
@@ -130,8 +139,15 @@ struct Customer readCustomerOrders()
     }
 	 /* Close the file now that we are done with it */
 	fclose(fp1);
-	return customer;
+	return order;
 }
+
+void printProduct(struct Product p)
+{
+	printf("Product Name: %s Price: %.2f\n", p.name, p.price);
+	printf("-------------\n");
+}
+
 void printShop(struct Shop s)
 {
 	printf("Shop has %.2f in cash\n", s.cash);
@@ -144,15 +160,22 @@ void printShop(struct Shop s)
 
 void printCustomer(struct Customer c)
 {
-	printf("in print customer function c.index = %d\n", c.index);
-	printf("CUSTOMER NAME: %s \nCUSTOMER BUDGET: %.2f\n", c.name, c.budget);
+	printf("Customer Name: %s  Budget: %.2f\n", c.name, c.budget);
 	printf("-------------\n");
-	for(int i = 0; i < c.index; i++)
+}
+
+void printOrder(struct Order  o)
+{
+	//printf("in print order function c.index = %d\n", c.index);
+	//printf("CUSTOMER NAME: %s \nCUSTOMER BUDGET: %.2f\n", c.name, c.budget);
+	printCustomer(o.customer);
+	printf("-------------\n");
+	for(int i = 0; i < o.index; i++)
 	{
-		printProduct(c.shoppingList[i].product);
-		printf("%s ORDERS %d OF ABOVE PRODUCT\n", c.name, c.shoppingList[i].quantity);
-		double cost = c.shoppingList[i].quantity * c.shoppingList[i].product.price; 
-		printf("The cost to %s will be €%.2f\n", c.name, cost);
+		printProduct(o.shoppingList[i].product);
+		printf("%s ORDERS %d OF ABOVE PRODUCT\n", o.customer.name, o.shoppingList[i].quantity);
+		double cost = o.shoppingList[i].quantity * o.shoppingList[i].product.price; 
+		printf("The cost to %s will be €%.2f\n", o.customer.name, cost);
 	}
 }
 
@@ -176,8 +199,8 @@ int main(void)
 	//struct Shop shop = createAndStockShop();
 	//printShop(shop);
 	
-	struct Customer customer = readCustomerOrders();
-	printCustomer(customer);
+	struct Order order = readCustomerOrders();
+	printOrder(order);
 	
 // printf("The shop has %d of the product %s\n", cokeStock.quantity, cokeStock.product.name);
 	
