@@ -75,7 +75,7 @@ struct Shop createAndStockShop()
 			struct Stock stockItem = { product, quantity };
 			shop.stock[shop.index++] = stockItem;
 			//printf("shop index is %d\n",shop.index);
-			printf("Product %s Price %.2f Qauntity %d added to shop stock\n\n", name, price, quantity);
+			printf("Product %s Price %.2f Quantity %d added to shop stock\n\n", name, price, quantity);
 			}
 	}
 	fclose(fp);
@@ -83,8 +83,21 @@ struct Shop createAndStockShop()
 }
 
 
+float get_product_price(struct Shop s, char *pname){
+	for (int i = 0; i < s.index; i++)
+	{
+		if (strcmp(pname,s.stock[i].product.name) == 0)
+        {
+		return s.stock[i].product.price;
+		break;
+        //printProduct(s.stock[i].product);
+		//printf(" %3d |\n", s.stock[i].quantity);
+        }
+	}
+	return 0;
+}
 
-struct Customer readCustomerOrder()
+struct Customer readCustomerOrder(struct Shop shop)
 {
 	struct Customer customer = {};
     FILE *fp1;
@@ -127,7 +140,9 @@ struct Customer readCustomerOrder()
 
 			int order_quantity = atoi(oq);
 			//how do I get product price from the earlier load of stock to appear here instead of zero(don't want the price in the custs csv)?
-			struct Product product = {pname, 2.00};
+			float pprice = get_product_price(shop, pname);
+			
+			struct Product product = {pname, pprice};
 			struct Stock shoppingListItem = { product, order_quantity };
 			customer.shoppingList[customer.index++] = shoppingListItem;
 			printf("Product %s Price %.2f Quantity %d added to Customer Order\n\n", pname, 0.0,order_quantity);
@@ -207,8 +222,9 @@ int main(void)
 	struct Shop shop = createAndStockShop();
 	printShop(shop);
 	printf("Loading Customer Order\n");
-	struct Customer customer = readCustomerOrder();
+	struct Customer customer = readCustomerOrder(shop);
 	printCustomer(customer);
+
 	
 // printf("The shop has %d of the product %s\n", cokeStock.quantity, cokeStock.product.name);
 	
