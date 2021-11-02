@@ -46,7 +46,7 @@ struct Shop createAndStockShop()
     ssize_t read;
 	int line_count = 0;
 
-    fp = fopen("stockcash.csv", "r");
+    fp = fopen("../Data/stockcash.csv", "r");
     if (fp == NULL)
         exit(EXIT_FAILURE);
 
@@ -110,7 +110,7 @@ struct Customer readCustomerOrder(struct Shop shop)
 	strcpy(sname, sn);*/
 
 
-    fp1 = fopen("custorder.csv", "r");
+    fp1 = fopen("../Data/custorder.csv", "r");
     if (fp1 == NULL)
         exit(EXIT_FAILURE);
 
@@ -194,10 +194,10 @@ void printCustomer(struct Customer c)
 		printf(" %6.2f |\n", cost);
 	}
 	printf("-----------------------------------------\n");
-	printf("| Total Cost of Order:           %6.2f |\n",total_cost);
+	printf("| Total Cost of Order:          €%6.2f |\n",total_cost);
 	printf("-----------------------------------------\n");
 	if (total_cost > c.budget){
-		printf("Warning - Order exceeds Customer Budget by %5.2f\n", (total_cost - c.budget));
+		printf("Warning - Order exceeds Customer Budget by €%5.2f\n", (total_cost - c.budget));
 		}
 	
 }
