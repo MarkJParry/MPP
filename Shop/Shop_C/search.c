@@ -27,7 +27,7 @@ struct Shop createAndStockShop()
     ssize_t read;
 	int line_count = 0;
 
-    fp = fopen("stockcash.csv", "r");
+    fp = fopen("../Data/stockcash.csv", "r");
     if (fp == NULL)
         exit(EXIT_FAILURE);
 
