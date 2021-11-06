@@ -21,11 +21,13 @@ struct Customer {
 	int index;
 
 };
-
+/*
 struct Order {
 	struct Customer customer;
 
 };
+*/
+//struct Customer customer;
 
 void print_menu(){
 
@@ -38,11 +40,19 @@ void print_menu(){
 	printf( "|4. Add Stock                    |\n");
 	printf( "|5. Change Price                 |\n");
 	printf( "|6. Change Budget                |\n");
+	printf( "|7. View Shop                    |\n");
+	printf( "|8. View Customer Order          |\n");
 	printf( "|9. Quit                         |\n");
 	printf( "+================================+\n");
 }
 
-
+void prtc(){
+	printf("Press the return key to continue\n");
+	char input[3];
+	fgets(input,3,stdin);
+	system("clear");
+	print_menu();
+}
 
 
 float get_product_price(struct Shop s, char *pname){
@@ -59,18 +69,79 @@ float get_product_price(struct Shop s, char *pname){
 	return 0;
 }
 
+void change_price(struct Shop* s){
+	char input[50];
+	printf("Enter  product for price change:\n");
+	fgets(input,50,stdin);
+	//strip the return character form the input
+	char *pn = strtok(input,"\n");
+	char *pname = malloc(sizeof(char) * 50);
+	strcpy(pname, pn);
+	int found = 0;
+	for (int i = 0; i < s->index; i++)
+	{
+		if (strcmp(pname,s->stock[i].product.name) == 0)
+        {
+		printf("Product %s is currently priced %3.2f\n",pname,s->stock[i].product.price);
+		printf("Enter the new price:\n");
+		char input[10];
+		fgets(input,10,stdin);
+		float pprice = atof(input);
+		s->stock[i].product.price = pprice;
+		printf("Product %s is now priced %3.2f\n",pname,s->stock[i].product.price);
+		found = 1;
+		break;
+        //printProduct(s.stock[i].product);
+		//printf(" %3d |\n", s.stock[i].quantity);
+        }
 
+	
+
+	}
+	if (found != 1){
+	printf("Product %s not found",pname);
+	}
+	return;
+}
+//struct Shop add_stock(struct Shop s1){
+void add_stock(struct Shop* s1){
+	printf("Shop index is %d\n",s1->index);
+
+	char input[50];
+	printf("Enter a product:\n");
+	fgets(input,50,stdin);
+	//strip the return character form the input
+	char *pn = strtok(input,"\n");
+	char *pname = malloc(sizeof(char) * 50);
+	strcpy(pname, pn);
+
+	printf("Enter the price:\n");
+	fgets(input,10,stdin);
+	float pprice = atof(input);
+	printf("Enter the quantity:\n");
+	fgets(input,10,stdin);
+	int pqty = atoi(input);
+	printf("You entered %s for name, %3.2f for price, %d for quantity\n",pname,pprice,pqty);
+	struct Product product = { pname, pprice };
+	struct Stock stockItem = { product, pqty };
+	s1->stock[s1->index++] = stockItem;
+	printf("shop index is %d\n",s1->index);
+	printf("Product %s Price %.2f Quantity %d added to shop stock\n\n", pname, pprice, pqty);
+	//printShop(s1);
+	prtc();
+	//return s1;
+}
 
 void printProduct(struct Product p)
 {
 	//printf("Product Name: %s Price: %.2f ", p.name, p.price);
-	printf("| %s \t %.2f  \t ", p.name, p.price);
+	printf("| %s \t %3.2f  \t ", p.name, p.price);
 
 }
 
 void printShop(struct Shop s)
 {
-	printf("Shop has %.2f in cash and the following products in stock:\n", s.cash);
+	printf("Shop has %3.2f in cash and the following products in stock:\n", s.cash);
 	printf("-------------------------------\n");
 	printf("|Product Name | Price | Qty OH|\n");
 	printf("-------------------------------\n");
@@ -80,11 +151,12 @@ void printShop(struct Shop s)
 		printf(" %3d |\n", s.stock[i].quantity);
 	}
 	printf("-------------------------------\n\n");
+	prtc();
 }
 
 void printCustomer(struct Customer c)
 {
-	printf("Customer Name: %s  Budget: %.2f\n", c.name, c.budget);
+	printf("Customer Name: %s  Budget: %3.2f\n", c.name, c.budget);
 	printf("Order Details:\n");
 	printf("-----------------------------------------\n");
 	printf("|Product Name | Price | OrderQty | Cost |\n");
@@ -106,5 +178,6 @@ void printCustomer(struct Customer c)
 	if (total_cost > c.budget){
 		printf("Warning - Order exceeds Customer Budget by €%5.2f\n", (total_cost - c.budget));
 		}
+	prtc();
 	
 }
