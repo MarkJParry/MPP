@@ -153,8 +153,10 @@ int main(void)
 
 		if (choice == 1)
 		{
-			struct Shop shop = createAndStockShop();
-			printShop(shop);
+			struct Customer newcustomer = addCustomerOrder(&shop);
+			printCustomer(newcustomer);
+			//struct Shop shop = createAndStockShop();
+			//printShop(shop);
 		} else if (choice == 2){
 			//printf("The user pressed 2\n");
 			printf("Loading Customer Order\n");

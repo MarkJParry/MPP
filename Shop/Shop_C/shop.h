@@ -34,7 +34,7 @@ void print_menu(){
 	printf( "+================================+\n");
 	printf( "|          Shop Menu             |\n");
 	printf( "+================================+\n");
-	printf( "|1. Load Shop from csv           |\n");
+	printf( "|1. Add Customer Order           |\n");
 	printf( "|2. Load Customer Order from csv |\n");
 	printf( "|3. Process Customer Order       |\n");
 	printf( "|4. Add Stock                    |\n");
@@ -69,6 +69,24 @@ float get_product_price(struct Shop s, char *pname){
 	return 0;
 }
 
+struct Stock get_product_details(struct Shop* s, char *pname){
+	int found = 0;
+	for (int i = 0; i < s->index; i++)
+	{
+		if (strcmp(pname,s->stock[i].product.name) == 0)
+        {
+		found = 1;
+		return s->stock[i];
+		break;
+        //printProduct(s.stock[i].product);
+		//printf(" %3d |\n", s.stock[i].quantity);
+        }
+	}
+	if (found != 1){
+		printf("Product not found\n");
+	}
+	
+}
 void change_price(struct Shop* s){
 	char input[50];
 	printf("Enter  product for price change:\n");
@@ -130,6 +148,77 @@ void add_stock(struct Shop* s1){
 	//printShop(s1);
 	prtc();
 	//return s1;
+}
+
+struct Customer addCustomerOrder(struct Shop* shop)
+{
+	system("clear");
+	printf("Add Customer Order\n");
+	struct Customer newcustomer ={};
+	int counter = 0;
+	int finished = 0;
+    while (finished != -1){
+
+
+		counter++;
+		if (counter == 1)
+		//add name & budget
+			{
+			char input[50];
+			printf("Enter customer name:\n");
+			fgets(input,50,stdin);
+
+			char *cn = strtok(input, "\n");
+			char *cname = malloc(sizeof(char) * 50);
+			strcpy(cname, cn);
+
+			printf("Enter customer budget:\n");
+			fgets(input,50,stdin);
+			double budget = atof(input);
+
+			newcustomer.name = cname;
+			newcustomer.budget = budget;
+			printf("Customer %s with a budget of %.2f created\n\n", cname, budget);
+			}
+		else
+
+		//add order lines
+			{
+			char input[50];
+			printf("Enter a product or -1 to finish:\n");
+			fgets(input,50,stdin);
+			//check for -1 to finish
+			if (strcmp(input,"-1\n") == 0){	
+				finished = -1;
+				break;
+				}
+			//strip the return character form the input
+			char *pn = strtok(input,"\n");
+			char *pname = malloc(sizeof(char) * 50);
+			strcpy(pname, pn);
+			
+			struct Stock s = get_product_details(shop, pname);
+			printf("Found product %s price %3.2f  quantity in stock %d\n",s.product.name,s.product.price,s.quantity);
+			
+			//char input[10];
+			printf("Enter the quantity to order:\n");
+			fgets(input,10,stdin);
+			int order_quantity = atoi(input);
+			//how do I get product price from the earlier load of stock to appear here instead of zero(don't want the price in the custs csv)?
+			//float pprice = get_product_price(shop, pname);
+			
+			struct Product product = {pname, s.product.price};
+			struct Stock shoppingListItem = { product, order_quantity };
+			newcustomer.shoppingList[newcustomer.index++] = shoppingListItem;
+			printf("Product %s Price %.2f Quantity %d added to Customer Order\n\n", pname, s.product.price, order_quantity);
+  			}
+	}
+	 /* Close the file now that we are done with it */
+
+	printf("Finished Loading Order - ");
+	prtc();
+	//system("clear");
+	return newcustomer;
 }
 
 void printProduct(struct Product p)
