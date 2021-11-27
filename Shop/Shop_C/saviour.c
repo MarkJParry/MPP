@@ -1,6 +1,6 @@
-10
 
-You pass structures to functions like this, don't do it in any other way:
+
+//You pass structures to functions like this, don't do it in any other way:
 
 typedef struct    // use typedef for convenience, no need to type "struct" all over the place
 {

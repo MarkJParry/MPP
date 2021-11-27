@@ -31,12 +31,12 @@ struct Order {
 };
 
 
-/*
-struct ShopCust {
-    struct Customer customer[20];
+
+struct ShopOrder {
+    struct Order order[20];
     int index;
 };
-*/
+
 
 void print_product(struct Product p)
 {
@@ -93,11 +93,19 @@ int main(void){
     shop.stock[1] = stock2;
     shop.stock[2] = stock3;
     shop.stock[3] = stock4;
+
+    /* works but editor doesn't like it
+    shop.stock[0] = {Bread,10};
+    shop.stock[1] = {Cheese,20};
+    shop.stock[2] = {Butter,5};
+    shop.stock[3] = {Pickle,2};
+    */
+
     shop.cash = 100.00;
     shop.index = 3;
 
     print_shop(shop);
-    //break point in debug
+
 
     //set up customer and order
     
@@ -109,8 +117,11 @@ int main(void){
     order1.order_line[0] =  order_line_1;
     order1.order_line[1] =  order_line_2;
     order1.index = 1;
-    
-    print_order(order1);
+    struct ShopOrder shoporder = {};
+    shoporder.order[0] = order1;
+    shoporder.index = 0;
+
+    //print_order(order1);
 
     //set up 2nd order for Mark
     struct Stock order_line_3 = {Bread,3};
@@ -123,7 +134,10 @@ int main(void){
     order2.order_line[2] =  order_line_5;
     order2.index = 2;
 
-    print_order(order2);
+    shoporder.order[1] = order2;
+    shoporder.index += 1;
+
+    //print_order(order2);
 
     //set up 1st order for Dominic
     struct Customer dominic = {"Dominic",100.00};
@@ -138,8 +152,16 @@ int main(void){
     order3.order_line[2] =  order_line_8;
     order3.order_line[3] =  order_line_9;
     order3.index = 3;
+
+    shoporder.order[2] = order3;
+    shoporder.index += 1;
     
-    print_order(order3);
+    //print_order(order3);
+
+    for ( int i=0; i <= shoporder.index; i++)
+    {
+        print_order(shoporder.order[i]);
+    }
 
 
 }

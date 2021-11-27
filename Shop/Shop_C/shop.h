@@ -62,31 +62,28 @@ float get_product_price(struct Shop s, char *pname){
         {
 		return s.stock[i].product.price;
 		break;
-        //printProduct(s.stock[i].product);
-		//printf(" %3d |\n", s.stock[i].quantity);
         }
 	}
 	return 0;
 }
 
-struct Stock get_product_details(struct Shop* s, char *pname){
-	int found = 0;
-	for (int i = 0; i < s->index; i++)
+int  get_product_details(struct Shop s, char *pname){
+
+	for (int i = 0; i < s.index; i++)
 	{
-		if (strcmp(pname,s->stock[i].product.name) == 0)
+		if (strcmp(pname,s.stock[i].product.name) == 0)
         {
-		found = 1;
-		return s->stock[i];
-		break;
-        //printProduct(s.stock[i].product);
-		//printf(" %3d |\n", s.stock[i].quantity);
+		printf("Found product %s price %3.2f  quantity in stock %d\n",s.stock[i].product.name,s.stock[i].product.price,s.stock[i].quantity);
+		return i;
         }
-	}
-	if (found != 1){
-		printf("Product not found\n");
-	}
+	}	
+	printf("Product %s not found\n",pname);
+	return -1;
 	
+
+
 }
+
 void change_price(struct Shop* s){
 	char input[50];
 	printf("Enter  product for price change:\n");
@@ -121,6 +118,7 @@ void change_price(struct Shop* s){
 	}
 	return;
 }
+
 //struct Shop add_stock(struct Shop s1){
 void add_stock(struct Shop* s1){
 	printf("Shop index is %d\n",s1->index);
@@ -150,20 +148,21 @@ void add_stock(struct Shop* s1){
 	//return s1;
 }
 
-struct Customer addCustomerOrder(struct Shop* shop)
+struct Customer addCustomerOrder(struct Shop shop)
 {
-	system("clear");
+	//system("clear");
 	printf("Add Customer Order\n");
 	struct Customer newcustomer ={};
+	float cost_of_order = 0.0;
 	int counter = 0;
 	int finished = 0;
-    while (finished != -1){
-
-
+	float budget =0.0;
+    while (finished != -1)
+		{
 		counter++;
 		if (counter == 1)
-		//add name & budget
 			{
+			//add name & budget
 			char input[50];
 			printf("Enter customer name:\n");
 			fgets(input,50,stdin);
@@ -181,14 +180,14 @@ struct Customer addCustomerOrder(struct Shop* shop)
 			printf("Customer %s with a budget of %.2f created\n\n", cname, budget);
 			}
 		else
-
-		//add order lines
 			{
+			//add order lines	
 			char input[50];
 			printf("Enter a product or -1 to finish:\n");
 			fgets(input,50,stdin);
 			//check for -1 to finish
-			if (strcmp(input,"-1\n") == 0){	
+			if (strcmp(input,"-1\n") == 0)
+				{	
 				finished = -1;
 				break;
 				}
@@ -196,21 +195,40 @@ struct Customer addCustomerOrder(struct Shop* shop)
 			char *pn = strtok(input,"\n");
 			char *pname = malloc(sizeof(char) * 50);
 			strcpy(pname, pn);
-			
-			struct Stock s = get_product_details(shop, pname);
-			printf("Found product %s price %3.2f  quantity in stock %d\n",s.product.name,s.product.price,s.quantity);
-			
-			//char input[10];
-			printf("Enter the quantity to order:\n");
-			fgets(input,10,stdin);
-			int order_quantity = atoi(input);
-			//how do I get product price from the earlier load of stock to appear here instead of zero(don't want the price in the custs csv)?
-			//float pprice = get_product_price(shop, pname);
-			
-			struct Product product = {pname, s.product.price};
-			struct Stock shoppingListItem = { product, order_quantity };
-			newcustomer.shoppingList[newcustomer.index++] = shoppingListItem;
-			printf("Product %s Price %.2f Quantity %d added to Customer Order\n\n", pname, s.product.price, order_quantity);
+
+			//check to see if product exits
+			int found = get_product_details(shop, pname);
+
+			if (found != -1)
+				{
+				//char input[10];
+				printf("Enter the quantity to order:\n");
+				fgets(input,10,stdin);
+				int order_quantity = atoi(input);
+				//check if enough stock to fulfil this line
+				if (order_quantity <= shop.stock[found].quantity)
+					{
+					float pprice = get_product_price(shop, pname);
+					cost_of_order += (order_quantity * pprice);
+					//check to see if over budget by adding this line to order
+					if (cost_of_order <= newcustomer.budget)
+						{
+						struct Product product = {pname, pprice};
+						struct Stock shoppingListItem = { product, order_quantity };
+						newcustomer.shoppingList[newcustomer.index++] = shoppingListItem;
+						printf("Product %s Price %.2f Quantity %d added to Customer Order\n\n", product.name, product.price, order_quantity);
+						}
+					else{
+						printf("The cost %3.2f of the order exceeds the budget %3.2f\n",cost_of_order,newcustomer.budget);
+						printf("Line not added to the order\n");
+						//remove this line from the cost of the order
+						cost_of_order -= (order_quantity * pprice);
+						}
+					}							
+				else{
+					printf("There is insufficient stock of %s to fulfil this line\n", pname);
+					}
+				}
   			}
 	}
 	 /* Close the file now that we are done with it */

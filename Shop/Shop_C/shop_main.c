@@ -153,7 +153,7 @@ int main(void)
 
 		if (choice == 1)
 		{
-			struct Customer newcustomer = addCustomerOrder(&shop);
+			struct Customer newcustomer = addCustomerOrder(shop);
 			printCustomer(newcustomer);
 			//struct Shop shop = createAndStockShop();
 			//printShop(shop);
