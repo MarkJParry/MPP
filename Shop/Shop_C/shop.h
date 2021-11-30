@@ -23,6 +23,7 @@ struct Customer {
 };
 
 struct OrderBook {
+	int OrderNo;
     struct Customer order[20];
     int index;
 };
@@ -271,8 +272,9 @@ void printShop(struct Shop s)
 
 void printCustomer(struct Customer c)
 {
+	//printf("ob ind3ex: %d",ob.index);
 	printf("Customer Name: %s  Budget: %3.2f\n", c.name, c.budget);
-	printf("Order Details:\n");
+	//printf("Order No:%d\tOrder  Details:\n",i);
 	printf("-----------------------------------------\n");
 	printf("|Product Name | Price | OrderQty | Cost |\n");
 	printf("-----------------------------------------\n");

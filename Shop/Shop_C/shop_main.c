@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <dirent.h>
 #include "shop.h"
 
 // stock csv first line will be the cash for the shop
@@ -137,6 +138,7 @@ int main(void)
 	struct Shop shop = createAndStockShop();
 	struct Customer customer = readCustomerOrder(shop);
 	ob.order[ob.index++] = customer;
+	ob.OrderNo = ob.index;
 	
 	/*
 	initialise structures to zero - do i need this?
@@ -159,6 +161,7 @@ int main(void)
 		{
 			struct Customer newcustomer = addCustomerOrder(shop);
 			ob.order[ob.index++] = newcustomer;
+			ob.OrderNo = ob.index;
 			//printf("index: %d", ob.index);
 			printCustomer(newcustomer);
 			//struct Shop shop = createAndStockShop();
@@ -166,9 +169,10 @@ int main(void)
 		} else if (choice == 2){
 			//printf("The user pressed 2\n");
 			printf("Loading Customer Order\n");
-			struct Shop shop;
+			//struct Shop shop;
 			struct Customer customerfromcsv = readCustomerOrder(shop);
 			ob.order[ob.index++] = customerfromcsv;
+			ob.OrderNo = ob.index;
 			//printf("index: %d", ob.index);
 			printCustomer(customerfromcsv);
 		} else if (choice == 3){
