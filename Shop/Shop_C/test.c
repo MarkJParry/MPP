@@ -30,12 +30,13 @@ struct Order {
     int index;
 };
 
-
-
-struct ShopOrder {
-    struct Order order[20];
+struct OrderBook {
+    struct Order order_entry[20];
     int index;
 };
+
+//struct Order ShopOrder[10];
+
 
 
 void print_product(struct Product p)
@@ -117,9 +118,20 @@ int main(void){
     order1.order_line[0] =  order_line_1;
     order1.order_line[1] =  order_line_2;
     order1.index = 1;
-    struct ShopOrder shoporder = {};
-    shoporder.order[0] = order1;
-    shoporder.index = 0;
+
+    struct OrderBook ob = {};
+    ob.order_entry[0] = order1;
+    ob.index = 0;
+
+    /*struct CustOrder custorder = {};
+    custorder.order[0] = order1;
+    custorder.index = 0;
+
+    struct ShopCust shopcust = {};
+    shopcust.custorder[0] = custorder;
+    shopcust.index = 0;
+
+    */
 
     //print_order(order1);
 
@@ -134,8 +146,8 @@ int main(void){
     order2.order_line[2] =  order_line_5;
     order2.index = 2;
 
-    shoporder.order[1] = order2;
-    shoporder.index += 1;
+    ob.order_entry[1] = order2;
+    ob.index = 1;
 
     //print_order(order2);
 
@@ -153,17 +165,26 @@ int main(void){
     order3.order_line[3] =  order_line_9;
     order3.index = 3;
 
-    shoporder.order[2] = order3;
-    shoporder.index += 1;
-    
+    ob.order_entry[2] = order3;
+    ob.index = 2;
+
+
+
     //print_order(order3);
 
-    for ( int i=0; i <= shoporder.index; i++)
+    for ( int i=0; i <= ob.index; i++)
     {
-        print_order(shoporder.order[i]);
+        print_order(ob.order_entry[i]);
     }
-
-
+/*
+    for ( int i=0; i <= shopcust.index; i++)
+    {
+        for ( int j=0; j <= custorder.index; j++)
+        {
+            print_order(custorder.order[j]);
+        }
+    }
+*/
 }
 
 

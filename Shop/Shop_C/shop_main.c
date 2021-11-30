@@ -59,7 +59,7 @@ struct Customer readCustomerOrder(struct Shop shop)
 {
 	system("clear");
 	printf("Loading Customer Order from file\n");
-	struct Customer customer;
+	struct Customer customer ={};
     FILE *fp1;
     char *line = NULL;
     size_t len = 0;
@@ -110,6 +110,8 @@ struct Customer readCustomerOrder(struct Shop shop)
 	}
 	 /* Close the file now that we are done with it */
 	fclose(fp1);
+	//struct OrderBook ob = {};
+    //ob.order[ob.index++] = customer;
 	printf("Finished Loading Order - ");
 	prtc();
 	system("clear");
@@ -131,9 +133,11 @@ int main(void)
 		#endif	
 	#endif
 	*/
-
+	struct OrderBook ob = {};
 	struct Shop shop = createAndStockShop();
 	struct Customer customer = readCustomerOrder(shop);
+	ob.order[ob.index++] = customer;
+	
 	/*
 	initialise structures to zero - do i need this?
 	struct Shop shop = {0,0,0};
@@ -154,6 +158,8 @@ int main(void)
 		if (choice == 1)
 		{
 			struct Customer newcustomer = addCustomerOrder(shop);
+			ob.order[ob.index++] = newcustomer;
+			//printf("index: %d", ob.index);
 			printCustomer(newcustomer);
 			//struct Shop shop = createAndStockShop();
 			//printShop(shop);
@@ -161,8 +167,10 @@ int main(void)
 			//printf("The user pressed 2\n");
 			printf("Loading Customer Order\n");
 			struct Shop shop;
-			struct Customer customer = readCustomerOrder(shop);
-			printCustomer(customer);
+			struct Customer customerfromcsv = readCustomerOrder(shop);
+			ob.order[ob.index++] = customerfromcsv;
+			//printf("index: %d", ob.index);
+			printCustomer(customerfromcsv);
 		} else if (choice == 3){
 			//process_order();
 			printf("The user pressed 3\n");
@@ -181,8 +189,14 @@ int main(void)
 			printShop(shop);
 		} else if (choice == 8){
 			//struct Customer customer;
-			printf("The user pressed 8\n");
-			printCustomer(customer);
+			//printf("The user pressed 8\n");
+			//printf("index: %d", ob.index);
+			print_menu();
+			for (int i = 0; i < ob.index; i++)
+				{
+				//printf("In print cust loop\n");
+				printCustomer(ob.order[i]);
+				}
 		}
 	}
 	printf("Buh bye\n");

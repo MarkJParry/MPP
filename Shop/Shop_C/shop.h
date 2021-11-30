@@ -21,6 +21,11 @@ struct Customer {
 	int index;
 
 };
+
+struct OrderBook {
+    struct Customer order[20];
+    int index;
+};
 /*
 struct Order {
 	struct Customer customer;
@@ -30,6 +35,8 @@ struct Order {
 //struct Customer customer;
 
 void print_menu(){
+
+	system("clear");
 
 	printf( "+================================+\n");
 	printf( "|          Shop Menu             |\n");
@@ -50,7 +57,7 @@ void prtc(){
 	printf("Press the return key to continue\n");
 	char input[3];
 	fgets(input,3,stdin);
-	system("clear");
+	//system("clear");
 	print_menu();
 }
 
@@ -232,7 +239,8 @@ struct Customer addCustomerOrder(struct Shop shop)
   			}
 	}
 	 /* Close the file now that we are done with it */
-
+    //struct OrderBook ob = {};
+    
 	printf("Finished Loading Order - ");
 	prtc();
 	//system("clear");
