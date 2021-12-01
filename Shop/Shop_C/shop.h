@@ -73,7 +73,8 @@ const char* get_csv_file_name(){
             //printf("Chosen:%d\n",choice);
             if (choice == -1)
                 {
-                break;
+				char *csv_file_name = "";
+                return csv_file_name;
                 }
             int validated = validate_input(choice,1,csv_folder.index);
             if (validated == 1)
@@ -171,7 +172,7 @@ struct Shop createAndStockShop()
 
 struct Customer readCustomerOrder(struct Shop shop)
 {
-	system("clear");
+	//system("clear");
 	printf("Loading Customer Order from file\n");
 	struct Customer customer ={};
     FILE *fp1;
@@ -182,16 +183,39 @@ struct Customer readCustomerOrder(struct Shop shop)
 	/*char *sn = "";
 	char *sname = malloc(sizeof(char) * 50);
 	strcpy(sname, sn);*/
+
+
+	// this is causing stack overflow somewhere? - solved by malloc
 	const char *csv_file_name = get_csv_file_name();
+	if (csv_file_name != "")
+		{
+		printf("csv file:%s\n",csv_file_name);
+		prtc();
+		}
+	else
+		{
+		return customer;
+		}
+	
 	char csv_path[8] = "../Data/";
-	const char *csv_full_file_name = strcat(csv_path,csv_file_name);
+
+	char *csv_full_file_name = malloc(sizeof(char) * 50);
+
+	strcpy(csv_full_file_name, csv_path);
+
+	strcat(csv_full_file_name,csv_file_name);
+	
+	//printf("File name %s\n",csv_full_file_name);
+	prtc();
+	
 	fp1 = fopen(csv_full_file_name, "r");
-    //fp1 = fopen("../Data/custorder.csv", "r");
+	
+    //fp1 = fopen("../Data/custorderMark.csv", "r");
     if (fp1 == NULL)
         exit(EXIT_FAILURE);
     while ((read = getline(&line, &len, fp1)) != -1){
 
-        printf("Retrieved line of length %zu: with contents: %s", read,line);
+        printf("Retrieved line of length %zu: with contents: %s\n", read,line);
 		line_count++;
 		if (line_count == 1)
 			{
@@ -221,7 +245,7 @@ struct Customer readCustomerOrder(struct Shop shop)
 			struct Product product = {pname, pprice};
 			struct Stock shoppingListItem = { product, order_quantity };
 			customer.shoppingList[customer.index++] = shoppingListItem;
-			printf("Product %s Price %.2f Quantity %d added to Customer Order\n\n", pname, pprice, order_quantity);
+			printf("Product %s Price %.2f Quantity %d added to Customer Order\n", pname, pprice, order_quantity);
   			}
 	}
 	 /* Close the file now that we are done with it */
@@ -230,7 +254,7 @@ struct Customer readCustomerOrder(struct Shop shop)
     //ob.order[ob.index++] = customer;
 	printf("Finished Loading Order - ");
 	prtc();
-	system("clear");
+	//system("clear");
 	return customer;
 	//return;
 }
@@ -295,7 +319,7 @@ void change_price(struct Shop* s){
 
 //struct Shop add_stock(struct Shop s1){
 void add_stock(struct Shop* s1){
-	printf("Shop index is %d\n",s1->index);
+	//printf("Shop index is %d\n",s1->index);
 
 	char input[50];
 	printf("Enter a product:\n");
@@ -311,12 +335,12 @@ void add_stock(struct Shop* s1){
 	printf("Enter the quantity:\n");
 	fgets(input,10,stdin);
 	int pqty = atoi(input);
-	printf("You entered %s for name, %3.2f for price, %d for quantity\n",pname,pprice,pqty);
+	//printf("You entered %s for name, %3.2f for price, %d for quantity\n",pname,pprice,pqty);
 	struct Product product = { pname, pprice };
 	struct Stock stockItem = { product, pqty };
 	s1->stock[s1->index++] = stockItem;
-	printf("shop index is %d\n",s1->index);
-	printf("Product %s Price %.2f Quantity %d added to shop stock\n\n", pname, pprice, pqty);
+	//printf("shop index is %d\n",s1->index);
+	printf("Product %s, Price %.2f, Quantity %d added to shop stock\n\n", pname, pprice, pqty);
 	//printShop(s1);
 	prtc();
 	//return s1;

@@ -75,7 +75,52 @@ void print_shop(struct Shop s)
 	//prtc();
 }
 
+int get_qty_oh(struct Shop *s, char *pname){
+	for (int i = 0; i < s->index; i++)
+	{
+		if (strcmp(pname,s->stock[i].product.name) == 0)
+        {
+		return s->stock[i].quantity;
+        }
+	}
+	return 0;
+}
 
+int update_qty_oh(struct Shop *s, char *pname,int ord_qty){
+	for (int i = 0; i < s->index; i++)
+	{
+		if (strcmp(pname,s->stock[i].product.name) == 0)
+        {
+        s->stock[i].quantity -= ord_qty;
+		return s->stock[i].quantity;
+        }
+	}
+	return 0;
+}
+
+void process_order(struct Order *o,struct Shop *s ){
+
+    printf("Order No: %d Customer: %s Budget: %3.2f\n", o->order_no, o->customer.name, o->customer.budget);
+    for (int i = 0; i < o->index+1; i++)
+        {
+            printf("Processing order line %d\n",i+1);
+            float cost_of_line = o->order_line[i].product.price * o->order_line[i].quantity;
+            print_product(o->order_line[i].product);
+            printf(" Order Qty: %d, Cost: %3.2f\n",o->order_line[i].quantity,cost_of_line);
+
+            //find the product in the shop and change the quantity on hand
+            int qty_on_hand = get_qty_oh(s,o->order_line[i].product.name);
+            printf("The shop has %d of these in stock\n",qty_on_hand);
+            int update_qty_on_hand = update_qty_oh(s,o->order_line[i].product.name,o->order_line[i].quantity);
+            printf("The shop now has %d of these in stock\n",update_qty_on_hand);
+
+            //update shop cash and customer budget
+            printf("Reducing the customers budget by %3.2f and adding it to shop's cash\n",cost_of_line);
+            o->customer.budget -= cost_of_line;
+            s->cash += cost_of_line;
+
+        }
+} 
 
 int main(void){
     //set up shop and stock
@@ -176,6 +221,10 @@ int main(void){
     {
         print_order(ob.order_entry[i]);
     }
+
+    process_order(&ob.order_entry[0],&shop);
+    print_order(ob.order_entry[0]);
+    print_shop(shop);
 /*
     for ( int i=0; i <= shopcust.index; i++)
     {

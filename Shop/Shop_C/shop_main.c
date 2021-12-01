@@ -88,10 +88,12 @@ int main(void)
 	*/
 	struct OrderBook ob = {};
 	struct Shop shop = createAndStockShop();
+	/*
 	struct Customer customer = readCustomerOrder(shop);
 	printf("Just finished loading shop and an order\n");
 	ob.order[ob.index++] = customer;
 	ob.OrderNo = ob.index;
+	*/
 	
 	/*
 	initialise structures to zero - do i need this?
@@ -124,39 +126,51 @@ int main(void)
 			printf("Loading Customer Order\n");
 			//struct Shop shop;
 			struct Customer customerfromcsv = readCustomerOrder(shop);
-			ob.order[ob.index++] = customerfromcsv;
-			ob.OrderNo = ob.index;
+			printf("Returned: %s\n",customerfromcsv.name);
+			if (customerfromcsv.name != NULL)
+				{
+				ob.order[ob.index++] = customerfromcsv;
+				ob.OrderNo = ob.index;
+				printCustomer(customerfromcsv);
+				}
 			//printf("index: %d", ob.index);
-			printCustomer(customerfromcsv);
+			
 		} else if (choice == 3){
 			//process_order();
 			printf("The user pressed 3\n");
 		}  else if (choice == 4){
-			printf("The user pressed 4\n");
+			//printf("The user pressed 4\n");
 			add_stock(&shop);
 		} else if (choice == 5){
-			printf("The user pressed 5\n");
+			//printf("The user pressed 5\n");
 			change_price(&shop);
 		} else if (choice == 6){
 			//change_budget();
 			printf("The user pressed 6\n");
 		} else if (choice == 7){
-			printf("The user pressed 7\n");
+			//printf("The user pressed 7\n");
 			//struct Shop shop;
 			printShop(shop);
 		} else if (choice == 8){
 			//struct Customer customer;
 			//printf("The user pressed 8\n");
 			//printf("index: %d", ob.index);
-			print_menu();
-			for (int i = 0; i < ob.index; i++)
+			if (ob.index == 0)
 				{
-				//printf("In print cust loop\n");
-				printCustomer(ob.order[i]);
+				printf("No orders have been added yet - option 1 will allow order entry, option 2 allows upload from a csv file\n");
+				}
+			else
+				{
+				print_menu();
+				for (int i = 0; i < ob.index; i++)
+					{
+					//printf("In print cust loop\n");
+					printCustomer(ob.order[i]);
+					}
 				}
 		}
 	}
-	printf("Buh bye\n");
+	printf("Thank you for your custom - call again soon\n");
 
 	/*struct Shop shop = createAndStockShop();
 	printShop(shop);
