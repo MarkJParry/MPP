@@ -2,45 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <dirent.h>
+#include "newshop.h"
 
-struct Product {
-	char* name;
-	double price;
-};
-
-struct Stock {
-	struct Product product;
-	int quantity;
-};
-
-struct Shop {
-	double cash;
-	struct Stock stock[20];
-	int index;
-};
-
-struct Customer {
-	char* name;
-	double budget;
-	struct Stock shoppingList[10];
-	int index;
-
-};
-
-struct OrderBook {
-    struct Customer order[20];
-    int index;
-};
-
-struct data_File {
-    int f_number;
-	char* f_name;
-};
-
-struct csv_Folder {
-	struct data_File data_file[20];
-	int index;
-};
 
 
 void print_menu(){
@@ -55,7 +18,7 @@ void print_menu(){
 	printf( "|3. Process Customer Order       |\n");
 	printf( "|4. Add Stock                    |\n");
 	printf( "|5. Change Price                 |\n");
-	printf( "|6. Change Budget                |\n");
+	printf( "|6. Modify Order                 |\n");
 	printf( "|7. View Shop                    |\n");
 	printf( "|8. View Customer Order          |\n");
 	printf( "|9. Quit                         |\n");
@@ -69,49 +32,101 @@ void prtc(){
 	//system("clear");
 	print_menu();
 }
+
+int get_choice(){
+	char input[3];
+	fflush(stdin);
+	printf("\nPlease choose an option ");
+	fgets(input,3,stdin);
+	int choice = atoi(input);
+	return choice;
+}
+
 //the below #include is here as the compiler throws a wobble if above at start of file - to do with order of functions
-#include "shop.h"
+//#include "shop.h"
 
 int main(void) 
 {
-	/*
-	#ifdef __unix__
- 		printf("Linux OS\n");
-		system("clear");
-	#else
-		#ifdef  _WIN32
-			printf("Windows OS");
-		 	system("cls");
-		#endif	
-	#endif
-	*/
+	int choice = -1;
+
 	struct OrderBook ob = {};
 	struct Shop shop = createAndStockShop();
-	/*
-	struct Customer customer = readCustomerOrder(shop);
-	printf("Just finished loading shop and an order\n");
-	ob.order[ob.index++] = customer;
-	ob.OrderNo = ob.index;
-	*/
-	
-	/*
-	initialise structures to zero - do i need this?
-	struct Shop shop = {0,0,0};
-	struct Customer customer = {"",0,0,0};
-	struct Stock stock = {0,0};
-	struct Stock shoppingList = {0,0};
-	struct Product product = {"",0};
-	*/
-	int choice = -1;
-	char input[3];
-	print_menu();
-	while (choice != 9){
-		fflush(stdin);
-		printf("\nPlease choose an option ");
-		fgets(input,3,stdin);
-		choice = atoi(input);
 
-		if (choice == 1)
+
+
+	print_menu();
+
+
+	while (choice != 9){
+		int choice = get_choice();
+
+		switch(choice){
+			case 1:
+				printf("The user pressed %d\n",choice);
+				printf("Now in case 1\n");
+				add_customer(choice,&shop);
+				prtc();
+				break;
+
+			case 2:
+				printf("The user pressed %d\n",choice);
+				printf("Now in case 2\n");
+				add_customer(choice,&shop);
+				prtc();
+				break;
+
+			case 3:
+				printf("The user pressed %d\n",choice);
+				printf("Now in case 3\n");
+				process_order(&ob);
+				prtc();
+				break;
+
+			case 4:
+				//printf("The user pressed %d\n",choice);
+				//printf("Now in case 4\n");
+				add_stock(&shop);
+				prtc();
+				break;
+
+			case 5:
+				//printf("The user pressed %d\n",choice);
+				//printf("Now in case 5\n");
+				change_price(&shop);
+				prtc();
+				break;
+
+			case 6:
+				printf("The user pressed %d\n",choice);
+				printf("Now in case 6\n");
+				break;
+
+			case 7:
+				//printf("The user pressed %d\n",choice);
+				//printf("Now in case 7\n");
+				printShop(&shop);
+				prtc();
+				break;
+
+			case 8:
+				printf("The user pressed %d\n",choice);
+				printf("Now in case 8\n");
+				printCustomer(&ob);
+				break;
+
+			case 9:
+				printf("The user pressed %d\n",choice);
+				printf("Now exiting program\n");
+
+				return choice;
+			default:
+				printf("The user pressed %d\n",choice);
+				printf("Please enter a number between 1 and 9\n");
+				break;
+		}
+	}
+
+/*		if (choice == 1)
 		{
 			struct Customer newcustomer = addCustomerOrder(shop);
 			ob.order[ob.index++] = newcustomer;
@@ -177,6 +192,7 @@ int main(void)
 		}
 	}
 	printf("Thank you for your custom - call again soon\n");
+	*/
 
 	/*struct Shop shop = createAndStockShop();
 	printShop(shop);
