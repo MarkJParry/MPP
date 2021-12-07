@@ -27,6 +27,7 @@ struct Order {
 	int order_no;
     struct Customer customer;
     struct Stock order_line[10];
+    double order_value;
     int index;
 };
 
@@ -50,7 +51,7 @@ void print_order(struct Order o)
 {
 	
     printf("Order No: %d Customer: %s Budget: %3.2f\n", o.order_no, o.customer.name, o.customer.budget);
-    printf("Order Details:\n");
+    printf("Order Details -> Lines:%d Total Cost:%3.2f\n",o.index+1,o.order_value);
         for (int i = 0; i < o.index+1; i++)
         {
             print_product(o.order_line[i].product);
@@ -60,6 +61,19 @@ void print_order(struct Order o)
     
 }
 
+void print_order_summary(struct Order o)
+{
+	
+    printf("Order No: %d Customer: %s Budget: %3.2f\n", o.order_no, o.customer.name, o.customer.budget);
+    printf("Order Details -> Line Items:%d Total Cost:%3.2f\n",o.index+1,o.order_value);
+       /* for (int i = 0; i < o.index+1; i++)
+        {
+            print_product(o.order_line[i].product);
+            printf(" Order Qty: %d\n",o.order_line[i].quantity);
+            //printf("Order No: %d Order Items: %d Total Cost: %3.2f\n",sc.customer[i].order->order_no,sc.customer[i].index,0.0);
+        }*/
+    
+}
 void print_shop(struct Shop s)
 {
 	printf("Shop has %3.2f in cash and the following products in stock:\n", s.cash);
@@ -157,12 +171,20 @@ int main(void){
     
     struct Customer mark = {"Mark",100.00};
     struct Stock order_line_1 = {Bread,3};
+    
     struct Stock order_line_2 = {Cheese,2};
+   
+
     struct Order order1 = {1};
     order1.customer = mark;
     order1.order_line[0] =  order_line_1;
     order1.order_line[1] =  order_line_2;
     order1.index = 1;
+
+    double total_cost = 0;
+    total_cost += Bread.price * 3; 
+    total_cost += Cheese.price * 2;
+    order1.order_value = total_cost;
 
     struct OrderBook ob = {};
     ob.order_entry[0] = order1;
@@ -184,12 +206,21 @@ int main(void){
     struct Stock order_line_3 = {Bread,3};
     struct Stock order_line_4 = {Butter,2};
     struct Stock order_line_5 = {Pickle,1};
+    struct Stock order_line_6 = {Cheese,2};
     struct Order order2 ={2};
     order2.customer = mark;
     order2.order_line[0] =  order_line_3;
     order2.order_line[1] =  order_line_4;
     order2.order_line[2] =  order_line_5;
-    order2.index = 2;
+    order2.order_line[3] =  order_line_6;
+    order2.index = 3;
+
+    total_cost = 0;
+    total_cost += Bread.price * 3; 
+    total_cost += Butter.price * 2;
+    total_cost += Pickle.price * 1;
+    total_cost += Cheese.price * 2;
+    order2.order_value = total_cost;
 
     ob.order_entry[1] = order2;
     ob.index = 1;
@@ -198,17 +229,23 @@ int main(void){
 
     //set up 1st order for Dominic
     struct Customer dominic = {"Dominic",100.00};
-    struct Stock order_line_6 = {Cheese,2};
+
     struct Stock order_line_7 = {Butter,1};
     struct Stock order_line_8 = {Pickle,3};
     struct Stock order_line_9 = {Bread,4};
     struct Order order3 ={3};
     order3.customer = dominic;
-    order3.order_line[0] =  order_line_6;
-    order3.order_line[1] =  order_line_7;
-    order3.order_line[2] =  order_line_8;
-    order3.order_line[3] =  order_line_9;
-    order3.index = 3;
+    
+    order3.order_line[0] =  order_line_7;
+    order3.order_line[1] =  order_line_8;
+    order3.order_line[2] =  order_line_9;
+    order3.index = 2;
+
+    total_cost = 0;
+    total_cost += Butter.price * 1;
+    total_cost += Pickle.price * 3;
+    total_cost += Bread.price * 4;
+    order3.order_value = total_cost;
 
     ob.order_entry[2] = order3;
     ob.index = 2;
@@ -219,7 +256,7 @@ int main(void){
 
     for ( int i=0; i <= ob.index; i++)
     {
-        print_order(ob.order_entry[i]);
+        print_order_summary(ob.order_entry[i]);
     }
 
     process_order(&ob.order_entry[0],&shop);

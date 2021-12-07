@@ -29,7 +29,6 @@ struct Customer {
 };
 
 struct OrderBook {
-	int OrderNo;
     struct Customer order[20];
     int index;
 };
@@ -116,7 +115,7 @@ int main(void)
 		{
 			struct Customer newcustomer = addCustomerOrder(shop);
 			ob.order[ob.index++] = newcustomer;
-			ob.OrderNo = ob.index;
+			//ob.OrderNo = ob.index;
 			//printf("index: %d", ob.index);
 			printCustomer(newcustomer);
 			//struct Shop shop = createAndStockShop();
@@ -130,14 +129,21 @@ int main(void)
 			if (customerfromcsv.name != NULL)
 				{
 				ob.order[ob.index++] = customerfromcsv;
-				ob.OrderNo = ob.index;
+				//ob.OrderNo = ob.index;
 				printCustomer(customerfromcsv);
 				}
 			//printf("index: %d", ob.index);
 			
 		} else if (choice == 3){
-			//process_order();
-			printf("The user pressed 3\n");
+			int otp = get_order_to_process(ob);
+			printf("Order to process:%d\n",otp);
+			if (otp != -1)
+				{
+				process_order(&ob.order[otp],&shop);
+				}
+			//process_order(otp);
+			
+			//printf("The user pressed 3\n");
 		}  else if (choice == 4){
 			//printf("The user pressed 4\n");
 			add_stock(&shop);
@@ -164,7 +170,7 @@ int main(void)
 				print_menu();
 				for (int i = 0; i < ob.index; i++)
 					{
-					//printf("In print cust loop\n");
+					printf("Order Number: %d\n",i+1);
 					printCustomer(ob.order[i]);
 					}
 				}

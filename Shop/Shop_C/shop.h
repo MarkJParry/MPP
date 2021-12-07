@@ -99,6 +99,72 @@ const char* get_csv_file_name(){
     
 }
 
+int get_order_to_process(struct OrderBook ob){
+	if (ob.index > 0)
+        {
+        printf("The order book contains the following orders:\n");
+        for(int i = 0;i < ob.index; i++)
+          	{
+        	printf("Order Number: %d\n", i+1);
+           	}
+        printf("Please choose an order to process by inputting its number or enter -1 to exit\n");
+        int choice = 0;
+        while (choice != -1)
+        	{
+        	int choice = get_input();
+        	//printf("Chosen:%d\n",choice);
+        	if (choice == -1)
+            	{
+				//char *csv_file_name = "";
+                //return csv_file_name;
+                return -1;
+                }
+            int validated = validate_input(choice,1,ob.index);
+            if (validated == 1)
+            	{
+            	int idx = choice -1;
+               	printf("You have chosen to process order no: %d\n",idx);
+				//char *csv_file_name = csv_folder.data_file[idx].f_name;
+				return idx;
+            	//break;
+                }
+            else
+                {
+                printf("Please enter a valid order number\n");
+                }
+            }
+        }
+    else
+        {
+        printf("The order book is empty - please add an order  via option 1 or 2\n");
+		return -1;   
+        }
+
+}
+int get_qty_oh(struct Shop *s, char *pname){
+	for (int i = 0; i < s->index; i++)
+	{
+		if (strcmp(pname,s->stock[i].product.name) == 0)
+        {
+		return s->stock[i].quantity;
+        }
+	}
+	return 0;
+}
+
+int update_qty_oh(struct Shop *s, char *pname,int ord_qty){
+	for (int i = 0; i < s->index; i++)
+	{
+		if (strcmp(pname,s->stock[i].product.name) == 0)
+        {
+        s->stock[i].quantity -= ord_qty;
+		return s->stock[i].quantity;
+        }
+	}
+	return 0;
+}
+
+
 float get_product_price(struct Shop s, char *pname){
 	for (int i = 0; i < s.index; i++)
 	{
@@ -489,4 +555,26 @@ void printCustomer(struct Customer c)
 	
 }
 
+void process_order(struct Customer *c,struct Shop *s ){
+	//printf("Order No: %d Customer: %s Budget: %3.2f\n", o->order_no, o->customer.name, o->customer.budget);
+    for (int i = 0; i < c->index; i++)
+        {
+            printf("Processing order line %d\n",i+1);
+            float cost_of_line = c->shoppingList[i].product.price * c->shoppingList[i].quantity;
+            printProduct(c->shoppingList[i].product);
+            printf(" Order Qty: %d, Cost: %3.2f\n",c->shoppingList[i].quantity,cost_of_line);
+
+            //find the product in the shop and change the quantity on hand
+            int qty_on_hand = get_qty_oh(s,c->shoppingList[i].product.name);
+            printf("The shop has %d of these in stock\n",qty_on_hand);
+            int update_qty_on_hand = update_qty_oh(s,c->shoppingList[i].product.name,c->shoppingList[i].quantity);
+            printf("The shop now has %d of these in stock\n",update_qty_on_hand);
+
+            //update shop cash and customer budget
+            printf("Reducing the customers budget by %3.2f and adding it to shop's cash\n",cost_of_line);
+            c->budget -= cost_of_line;
+            s->cash += cost_of_line;
+
+        }
+}
 
