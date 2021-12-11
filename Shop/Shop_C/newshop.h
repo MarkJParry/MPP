@@ -60,6 +60,9 @@ void printShop();
 void printCustomer();
 void add_stock();
 void change_price();
-void add_customer();
+struct OrderBook add_customer();
 void process_order();
+void modify_order();
+int get_order_to_process();
+int get_line_to_modify();
 #endif

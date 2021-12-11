@@ -96,7 +96,7 @@ const char* get_csv_file_name(){
             if (validated == 1)
                 {
                 int idx = choice -1;
-                printf("You have chosen to upload %s\n",csv_folder.data_file[idx].f_name);
+                //printf("You have chosen to upload %s\n",csv_folder.data_file[idx].f_name);
 				char *csv_file_name = csv_folder.data_file[idx].f_name;
 				return csv_file_name;
                 //break;
@@ -201,14 +201,28 @@ int update_qty_oh(struct Shop *s, char *pname,int ord_qty){
 	}
 	return 0;
 }
-
-
-float get_product_price(struct Shop s, char *pname){
-	for (int i = 0; i < s.index; i++)
+/*
+int update_order_qty(int ord_qty){
+	// no need to search as will already have order and line
+	for (int i = 0; i < s->index; i++)
 	{
-		if (strcmp(pname,s.stock[i].product.name) == 0)
+		if (strcmp(pname,s->stock[i].product.name) == 0)
         {
-		return s.stock[i].product.price;
+        s->stock[i].quantity -= ord_qty;
+		return s->stock[i].quantity;
+        }
+	}
+	return 0;
+}
+*/
+
+
+float get_product_price(struct Shop *s, char *pname){
+	for (int i = 0; i < s->index; i++)
+	{
+		if (strcmp(pname,s->stock[i].product.name) == 0)
+        {
+		return s->stock[i].product.price;
 		break;
         }
 	}
@@ -219,27 +233,19 @@ float get_product_price(struct Shop s, char *pname){
 
 
 
-struct Customer readCustomerOrder(struct Shop shop)
+struct Customer readCustomerOrder(struct Shop *shop)
 {
-	//system("clear");
-	printf("Loading Customer Order from file\n");
+	//printf("Loading Customer Order from file\n");
 	struct Customer customer ={};
     FILE *fp1;
     char *line = NULL;
     size_t len = 0;
     ssize_t read;
 	int line_count = 0;
-	/*char *sn = "";
-	char *sname = malloc(sizeof(char) * 50);
-	strcpy(sname, sn);*/
-
-
-	// this is causing stack overflow somewhere? - solved by malloc
 	const char *csv_file_name = get_csv_file_name();
 	if (csv_file_name != "")
 		{
-		printf("csv file:%s\n",csv_file_name);
-		//prtc();
+		printf("You have chosen to upload csv file:%s\n",csv_file_name);
 		}
 	else
 		{
@@ -264,7 +270,7 @@ struct Customer readCustomerOrder(struct Shop shop)
         exit(EXIT_FAILURE);
     while ((read = getline(&line, &len, fp1)) != -1){
 
-        printf("Retrieved line of length %zu: with contents: %s\n", read,line);
+        printf("Retrieved line of length %zu: with contents: %s", read,line);
 		line_count++;
 		if (line_count == 1)
 			{
@@ -294,18 +300,14 @@ struct Customer readCustomerOrder(struct Shop shop)
 			struct Product product = {pname, pprice};
 			struct Stock shoppingListItem = { product, order_quantity };
 			customer.shoppingList[customer.index++] = shoppingListItem;
-			printf("Product %s Price %.2f Quantity %d added to Customer Order\n", pname, pprice, order_quantity);
+			printf("Product %s Price %.2f Quantity %d added to Customer Order\n\n", pname, pprice, order_quantity);
   			}
 	}
 	 /* Close the file now that we are done with it */
 	fclose(fp1);
-	//struct OrderBook ob = {};
-    //ob.order[ob.index++] = customer;
 	printf("Finished Loading Order - ");
 	prtc();
-	//system("clear");
 	return customer;
-	//return;
 }
 
 
@@ -314,13 +316,13 @@ struct Customer readCustomerOrder(struct Shop shop)
 
 
 
-int  get_product_details(struct Shop s, char *pname){
+int  get_product_details( struct Shop *s, char *pname){
 
-	for (int i = 0; i < s.index; i++)
+	for (int i = 0; i < s->index; i++)
 	{
-		if (strcmp(pname,s.stock[i].product.name) == 0)
+		if (strcmp(pname,s->stock[i].product.name) == 0)
         {
-		printf("Found product %s price %3.2f  quantity in stock %d\n",s.stock[i].product.name,s.stock[i].product.price,s.stock[i].quantity);
+		printf("Found product %s price %3.2f  quantity in stock %d\n",s->stock[i].product.name,s->stock[i].product.price,s->stock[i].quantity);
 		return i;
         }
 	}	
@@ -332,7 +334,7 @@ int  get_product_details(struct Shop s, char *pname){
 }
 
 
-struct Customer addCustomerOrder(struct Shop shop)
+struct Customer addCustomerOrder(struct Shop *shop)
 {
 	//system("clear");
 	printf("Add Customer Order\n");
@@ -390,7 +392,7 @@ struct Customer addCustomerOrder(struct Shop shop)
 				fgets(input,10,stdin);
 				int order_quantity = atoi(input);
 				//check if enough stock to fulfil this line
-				if (order_quantity <= shop.stock[found].quantity)
+				if (order_quantity <= shop->stock[found].quantity)
 					{
 					float pprice = get_product_price(shop, pname);
 					cost_of_order += (order_quantity * pprice);
@@ -475,14 +477,92 @@ void process_order(struct Customer *c,struct Shop *s ){
 
         }
 }
-
-void add_customer(int choice, struct Shop shop){
-	printf("In add customer function  choice: %d\n",choice);
+struct OrderBook add_customer(int choice, struct Shop *shop){
+	//printf("In add customer function  choice: %d\n",choice);
 	if (choice == 1){
+		struct OrderBook ob1 ={};
 		struct Customer newcustomer = addCustomerOrder(shop);
+		if (newcustomer.name != NULL)
+			{
+			ob1.order[ob1.index++] = newcustomer;
+			printCustomer(newcustomer);
+			}
+		return ob1;
+
 	}
 	else if (choice == 2){
-		struct Customer customerfromcsv = readCustomerOrder(shop);
+		struct OrderBook ob2 ={};
+		struct Customer newcustomer = readCustomerOrder(shop);
+		if (newcustomer.name != NULL)
+			{
+			ob2.order[ob2.index++] = newcustomer;
+			printCustomer(newcustomer);
+			}
+		return ob2;
 	}
 	
+}
+int get_line_to_modify(struct Customer *c ){
+	if (c->index > 0)
+        {
+        printf("The order contains the following lines:\n");
+		printf("------------------------------------\n");
+		printf("|LineNo | Item         | Order Qty |\n");
+		printf("------------------------------------\n");
+        for(int i = 0;i < c->index; i++)
+          	{
+        	printf("| %d\t", i+1);
+			printf("| %-13s",c->shoppingList[i].product.name);
+			printf("| %3d       |\n" ,c->shoppingList[i].quantity);
+			//float order_value = calculate_order_cost(ob.order[i]);
+			//printf("| %6.2f |\n",order_value);
+           	}
+		printf("------------------------------------\n");
+        printf("Please choose a line item to modify by inputting its number or enter -1 to exit\n");
+        int choice = 0;
+        while (choice != -1)
+        	{
+        	int choice = get_input();
+        	//printf("Chosen:%d\n",choice);
+        	if (choice == -1)
+            	{
+				//char *csv_file_name = "";
+                //return csv_file_name;
+                return -1;
+                }
+            int validated = validate_input(choice, 1, c->index);
+            if (validated == 1)
+            	{
+            	int idx = choice -1;
+               	printf("You have chosen to modify order line no: %d\n",choice);
+				//char *csv_file_name = csv_folder.data_file[idx].f_name;
+				return idx;
+            	//break;
+                }
+            else
+                {
+                printf("Please enter a valid order line number\n");
+                }
+            }
+        }
+    else
+        {
+        printf("No lines have been added to this order yet - option 1 will allow order entry, option 2 allows upload from a csv file\n");
+		return -1;   
+        }
+}
+
+void modify_order(struct Customer *c,struct Shop *s){
+	printf("In modify order\n");
+	printf("index:%d\n",c->index);
+	int ltm = get_line_to_modify(c);
+	if (ltm != -1)
+		{
+		char input[50];
+		printf("Enter the new order quantity:\n");
+		fgets(input,10,stdin);
+		int nqty = atoi(input);
+		c->shoppingList[ltm].quantity = nqty;
+		}
+	prtc();
 }

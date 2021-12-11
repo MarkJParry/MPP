@@ -25,10 +25,10 @@ class Customer:
 
 def get_price(shop, pname):
     for item in shop.stock:
-        if item.product.name  == pname:
-            #print("found product")
-            pprice = item.product.price
-    return pprice
+      if item.product.name  == pname:
+         #print("found product")
+        return item.product.price
+    return 0
 
 def create_and_stock_shop():
     s = Shop()
@@ -103,5 +103,5 @@ print_shop(s)
 #pname = "Bread"
 #get_price(s, pname)
 
-c = read_customer("../data/custorder.csv",s)
+c = read_customer("../data/custorderDom.csv",s)
 print_customer(c)

@@ -55,7 +55,7 @@ void print_menu(){
 	printf( "|3. Process Customer Order       |\n");
 	printf( "|4. Add Stock                    |\n");
 	printf( "|5. Change Price                 |\n");
-	printf( "|6. Change Budget                |\n");
+	printf( "|6. Modify Order                 |\n");
 	printf( "|7. View Shop                    |\n");
 	printf( "|8. View Customer Order          |\n");
 	printf( "|9. Quit                         |\n");

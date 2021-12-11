@@ -62,65 +62,102 @@ int main(void)
 
 		switch(choice){
 			case 1:
-				printf("The user pressed %d\n",choice);
-				printf("Now in case 1\n");
-				add_customer(choice,&shop);
-				prtc();
+				//printf("The user pressed %d\n",choice);
+				printf("Option 1 - Add Customer Order\n");
+
+				struct OrderBook ob1 = add_customer(choice,&shop);
+				if (ob1.index != 0)
+					{
+					ob.order[ob.index++] = ob1.order[0];
+					}
 				break;
 
 			case 2:
-				printf("The user pressed %d\n",choice);
-				printf("Now in case 2\n");
-				add_customer(choice,&shop);
-				prtc();
+				//printf("The user pressed %d\n",choice);
+				printf("Option 2 - Load Customer Order from csv\n");
+				struct OrderBook ob2 = add_customer(choice,&shop);
+				//printf("Returned %d\n",ob2.index);
+				if (ob2.index != 0)
+					{
+					ob.order[ob.index++] = ob2.order[0];
+					}
+				//printf("ob index:%d\n",ob.index);
+				//printf("about to print customer using item returned\n");
+				//printCustomer(ob2.order[0]);
+				//prtc();
 				break;
 
 			case 3:
-				printf("The user pressed %d\n",choice);
-				printf("Now in case 3\n");
-				process_order(&ob);
+				//printf("The user pressed %d\n",choice);
+				printf("Option 3 - Process Customer Order\n");
+				int otp = get_order_to_process(ob);
+				//printf("Order to process:%d\n",otp);
+				if (otp != -1)
+					{
+					process_order(&ob.order[otp],&shop);
+					}
 				prtc();
 				break;
 
 			case 4:
 				//printf("The user pressed %d\n",choice);
-				//printf("Now in case 4\n");
+				printf("Option 4 - Add Stock to Shop\n");
 				add_stock(&shop);
 				prtc();
 				break;
 
 			case 5:
 				//printf("The user pressed %d\n",choice);
-				//printf("Now in case 5\n");
+				printf("Option 5 - Change stock product price\n");
 				change_price(&shop);
 				prtc();
 				break;
 
 			case 6:
-				printf("The user pressed %d\n",choice);
-				printf("Now in case 6\n");
+				//printf("The user pressed %d\n",choice);
+				printf("Option 6 - Modify Customer Order\n");
+				int otm = get_order_to_process(ob);
+				//printf("Order to process:%d\n",otp);
+				if (otm != -1)
+					{
+					modify_order(&ob.order[otm],&shop);
+					}
+				prtc();
 				break;
 
 			case 7:
 				//printf("The user pressed %d\n",choice);
-				//printf("Now in case 7\n");
+				printf("Option 7 - Print Shop\n");
 				printShop(&shop);
 				prtc();
 				break;
 
 			case 8:
 				printf("The user pressed %d\n",choice);
-				printf("Now in case 8\n");
-				printCustomer(&ob);
+				printf("Option 8 - Print Customer\n");
+				if (ob.index == 0)
+					{
+					printf("No orders have been added yet - option 1 will allow order entry, option 2 allows upload from a csv file\n");
+					}
+				else
+					{
+					print_menu();
+					for (int i = 0; i < ob.index; i++)
+						{
+						printf("Order Number: %d\n",i+1);
+						printCustomer(ob.order[i]);
+						}
+					}
+				//printCustomer(&ob);
 				break;
 
 			case 9:
-				printf("The user pressed %d\n",choice);
-				printf("Now exiting program\n");
+				//printf("Option 9 - Exit\n");
+				printf("Option 9 - Now exiting program\n");
 
 				return choice;
 			default:
-				printf("The user pressed %d\n",choice);
+				//printf("The user pressed %d\n",choice);
 				printf("Please enter a number between 1 and 9\n");
 				break;
 		}
